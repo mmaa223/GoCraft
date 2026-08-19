@@ -3,6 +3,8 @@ package main
 import rl "github.com/gen2brain/raylib-go/raylib"
 import rg "github.com/gen2brain/raylib-go/raygui"
 
+var game_is_paused bool = false
+
 var camera rl.Camera3D = rl.NewCamera3D(
 	rl.NewVector3(10, 10, 10),
 	rl.NewVector3(0, 0, 0),
@@ -12,7 +14,11 @@ var camera rl.Camera3D = rl.NewCamera3D(
 )
 
 func ui() {
-	rg.Button(rl.NewRectangle(10, 10, 100, 100), "hello")
+	if game_is_paused {
+
+		rg.Button(rl.NewRectangle(10, 10, 100, 100), "hello")
+
+	}
 }
 
 func main() {
@@ -36,9 +42,20 @@ func main() {
 
 	rl.SetMaterialTexture(model.Materials, rl.MapDiffuse, texture)
 	for !rl.WindowShouldClose() {
-		//ui()
-		rl.UpdateCamera(&camera, rl.CameraFree)
+		ui()
+		if rl.IsKeyPressed(rl.KeyTab) {
+			if game_is_paused {
+				rl.DisableCursor()
+				game_is_paused = false
+			} else {
+				rl.EnableCursor()
+				game_is_paused = true
+			}
+		}
 
+		if !game_is_paused {
+			rl.UpdateCamera(&camera, rl.CameraFree)
+		}
 		rl.BeginDrawing()
 
 		rl.ClearBackground(rl.Black)
